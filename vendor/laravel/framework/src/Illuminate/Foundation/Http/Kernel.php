@@ -34,12 +34,12 @@ class Kernel implements KernelContract
      * @var array
      */
     protected $bootstrappers = [
-        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
-        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
-        \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
-        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
-        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
-        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class, // 加载环境变量
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class, // 加载配置
+        \Illuminate\Foundation\Bootstrap\HandleExceptions::class, // 处理异常
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class, // 注册 Facades
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class, // 注册 Provider
+        \Illuminate\Foundation\Bootstrap\BootProviders::class, // 执行 Provider 中的 boot 方法
     ];
 
     /**
@@ -111,6 +111,7 @@ class Kernel implements KernelContract
     public function handle($request)
     {
         try {
+            // 当真实请求 method 为 post 时，允许 http 请求头中指定 put，delete 方法
             $request->enableHttpMethodParameterOverride();
 
             $response = $this->sendRequestThroughRouter($request);
@@ -139,12 +140,15 @@ class Kernel implements KernelContract
      */
     protected function sendRequestThroughRouter($request)
     {
+        // 绑定 request 实例到容器中
         $this->app->instance('request', $request);
 
         Facade::clearResolvedInstance('request');
 
+        // 容器初始化
         $this->bootstrap();
 
+        // 让请求通过中间件和 action 处理并返回 response
         return (new Pipeline($this->app))
                     ->send($request)
                     ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)

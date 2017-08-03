@@ -202,11 +202,21 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     {
         $this->hasBeenBootstrapped = true;
 
+        // 调用 Illuminate\Foundation\Bootstrap 下的类初始化项目
+        // 加载环境变量
+        // 加载配置
+        // 处理异常
+        // 注册 Facades
+        // 注册 Provider
+        // 执行 Provider 中的 boot 方法
         foreach ($bootstrappers as $bootstrapper) {
+            // 记录执行中事件
             $this['events']->fire('bootstrapping: '.$bootstrapper, [$this]);
 
+            // 调用各初始化实例的 bootstrap 方法
             $this->make($bootstrapper)->bootstrap($this);
 
+            // 记录事件执行完毕
             $this['events']->fire('bootstrapped: '.$bootstrapper, [$this]);
         }
     }

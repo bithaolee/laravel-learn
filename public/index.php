@@ -33,6 +33,7 @@ require __DIR__.'/../bootstrap/autoload.php';
 |
 */
 
+// 加载容器并初始化
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
 /*
@@ -47,12 +48,18 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 |
 */
 
+// 从容器中取出 http kernel 处理 http 请求
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
+// Illuminate\Http\Request 是对 Symphony Request 的封装
+// $request = Illuminate\Http\Request::capture() 得到一个 Request 实例
+// 调用 handle 方法处理 request 请求，得到 response 对象
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
 
+// 将 response 发送到客户端
 $response->send();
 
+// 执行收尾操作，如 session 保存，容器的 terminate 方法
 $kernel->terminate($request, $response);

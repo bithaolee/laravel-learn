@@ -10,7 +10,7 @@
 | the IoC container for the system binding all of the various parts.
 |
 */
-
+// 实例化容器 app
 $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
 );
@@ -26,6 +26,7 @@ $app = new Illuminate\Foundation\Application(
 |
 */
 
+// 绑定 http kernel 和 console kernel 及异常处理类
 $app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     App\Http\Kernel::class
